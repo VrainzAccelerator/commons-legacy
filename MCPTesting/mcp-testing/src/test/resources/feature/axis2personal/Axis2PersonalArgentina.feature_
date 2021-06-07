@@ -1,0 +1,35 @@
+@executeThis
+Feature: Procesamiento de eventos de Personal Argentina
+
+  Scenario: Alta sucripto Personal Argentina recibido ok
+    Given the message "<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:CdagNotificationService"><soapenv:Header/><soapenv:Body><ns1:NotificarEvento><user>user</user><password>12345678</password><notifications><tid>1010</tid><tipoEvento>0</tipoEvento><datoEvento>3838|20141021|1964|amba21|33000|</datoEvento></notifications></ns1:NotificarEvento></soapenv:Body>"     
+	When I make the post to this url "http://192.168.10.221:8080/axis2/services/NotificationsService"
+    Then response should contain "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><ns1:NotificarEventoResponse xmlns:ns1="urn:CdagNotificationService" /></soapenv:Body></soapenv:Envelope>"
+		And response code 200 must be returned
+
+  Scenario: Baja sucripto Personal Argentina recibido ok
+    Given the message "<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:CdagNotificationService"><soapenv:Header/><soapenv:Body><ns1:NotificarEvento><user>user</user><password>12345678</password><notifications><tid>1010</tid><tipoEvento>1</tipoEvento><datoEvento>3838|20141021|1964|amba21|33000|</datoEvento></notifications></ns1:NotificarEvento></soapenv:Body></soapenv:Envelope>"     
+	When I make the post to this url "http://192.168.10.221:8080/axis2/services/NotificationsService"
+    Then response should contain "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><ns1:NotificarEventoResponse xmlns:ns1="urn:CdagNotificationService" /></soapenv:Body></soapenv:Envelope>"
+		And response code 200 must be returned
+		  
+
+  Scenario: Billing Personal Argentina recibido ok
+    Given the message "<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:CdagNotificationService"><soapenv:Header /><soapenv:Body><ns1:NotificarEvento><user>user</user><password>321</password><notifications><tid>14141414</tid><tipoEvento>2</tipoEvento><datoEvento>0|51117360880|33000|1970|amba6|2|1427447349|1427447349|99|14141414|</datoEvento></notifications></ns1:NotificarEvento></soapenv:Body></soapenv:Envelope>"     
+	When I make the post to this url "http://192.168.10.221:8080/axis2/services/NotificationsService"
+    Then response should contain "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><ns1:NotificarEventoResponse xmlns:ns1="urn:CdagNotificationService" /></soapenv:Body></soapenv:Envelope>"
+		And response code 200 must be returned
+
+  Scenario: Mensaje incorrecto, xml mal formado
+    Given the message "<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:CdagNotificationService"><soapenv:Header /><soapenv:Body><ns1:NotificarEvento><user>user</user><password>321</password><notifications><tid>14141414</tid><tipoEvento>2</tipoEvento><datoEvento>0|51117360880|33000|1970|amba6|2|1427447349|1427447349|99|14141414|</datoEvento></notifications></soapenv:Body></soapenv:Envelope>"     
+ 	When I make the post to this url "http://192.168.10.221:8080/axis2/services/NotificationsService"
+    Then response code 500 must be returned
+ 
+
+  Scenario: Mensaje vacio
+    Given the message ""     
+ 	When I make the post to this url "http://192.168.10.221:8080/axis2/services/NotificationsService"
+ 	Then response code 500 must be returned
+ 	
+ 	
+ 

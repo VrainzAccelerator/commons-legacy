@@ -1,0 +1,42 @@
+@executeThis
+Feature: Procesamiento de eventos de Claro Peru
+
+  Scenario: Alta sucripto Claro Peru recibido ok
+    Given the message "<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cdc="http://type.ws.cdc.tecnotree.com/CDCNotificationType"> <soapenv:Header/> <soapenv:Body> <cdc:deliveryNotificationRequest> <cdc:transId>1234567899876543</cdc:transId> <cdc:from>4800</cdc:from> <cdc:to>34356</cdc:to> <cdc:status>0</cdc:status> <!--Optional:--> <cdc:tariffId>20880</cdc:tariffId> <cdc:keyword>HISTORIA</cdc:keyword> <cdc:errorCode>602</cdc:errorCode> <cdc:errorMessage>?</cdc:errorMessage> </cdc:deliveryNotificationRequest> </soapenv:Body> </soapenv:Envelope>"     
+	When I make the post to this url "http://192.168.10.221:8080/axis2_claro_peru/services/CPNotificationService"
+    Then response should contain "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><cdc:submitSMSResponse xmlns:cdc="http://170.51.255.57:9191/CPNotificationService/"><cdc:submitResponse><cdc:transId>1234567899876543</cdc:transId><cdc:statusCode>0</cdc:statusCode><cdc:statusMessage>Request accepted successfully</cdc:statusMessage></cdc:submitResponse></cdc:submitSMSResponse></soapenv:Body></soapenv:Envelope>"
+		And response code 200 must be returned
+
+  Scenario: Baja sucripto Claro Peru recibido ok
+    Given the message "<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cdc="http://type.ws.cdc.tecnotree.com/CDCNotificationType"><soapenv:Header/><soapenv:Body><cdc:deliveryNotificationRequest><cdc:transId>1234567899876543</cdc:transId><cdc:from>4800</cdc:from><cdc:to>34356</cdc:to><cdc:status>2</cdc:status><!--Optional:--><cdc:tariffId>20880</cdc:tariffId><cdc:keyword>HISTORIA</cdc:keyword><cdc:errorCode>601</cdc:errorCode><cdc:errorMessage>?</cdc:errorMessage></cdc:deliveryNotificationRequest></soapenv:Body></soapenv:Envelope>"     
+	When I make the post to this url "http://192.168.10.221:8080/axis2_claro_peru/services/CPNotificationService"
+    Then response should contain "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><cdc:submitSMSResponse xmlns:cdc="http://170.51.255.57:9191/CPNotificationService/"><cdc:submitResponse><cdc:transId>1234567899876543</cdc:transId><cdc:statusCode>0</cdc:statusCode><cdc:statusMessage>Request accepted successfully</cdc:statusMessage></cdc:submitResponse></cdc:submitSMSResponse></soapenv:Body></soapenv:Envelope>"
+		And response code 200 must be returned
+		  
+
+  Scenario: Billing Claro Peru recibido ok
+    Given the message "<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cdc="http://type.ws.cdc.tecnotree.com/CDCNotificationType"> <soapenv:Header/> <soapenv:Body> <cdc:deliveryNotificationRequest> <cdc:transId>1234567899876543</cdc:transId> <cdc:from>4800</cdc:from> <cdc:to>34356</cdc:to> <cdc:status>0</cdc:status> <!--Optional:--> <cdc:tariffId>20880</cdc:tariffId> <cdc:keyword>HISTORIA</cdc:keyword> <cdc:errorCode>602</cdc:errorCode> <cdc:errorMessage>?</cdc:errorMessage> </cdc:deliveryNotificationRequest> </soapenv:Body> </soapenv:Envelope>"     
+	When I make the post to this url "http://192.168.10.221:8080/axis2_claro_peru/services/CPNotificationService"
+    Then response should contain "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><cdc:submitSMSResponse xmlns:cdc="http://170.51.255.57:9191/CPNotificationService/"><cdc:submitResponse><cdc:transId>1234567899876543</cdc:transId><cdc:statusCode>0</cdc:statusCode><cdc:statusMessage>Request accepted successfully</cdc:statusMessage></cdc:submitResponse></cdc:submitSMSResponse></soapenv:Body></soapenv:Envelope>"
+		And response code 200 must be returned
+
+  Scenario: Mensaje incorrecto, xml mal formado
+  	#si bien devuelve un estado que parece valido, no devuelve un transid si el xml esta mal formado
+    Given the message "<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cdc="http://type.ws.cdc.tecnotree.com/CDCNotificationType"> <soapenv:Header/> <soapenv:Body> <cdc:deliveryNotificationRequest> <cdc:transId>1234567899876543</cdc:transId> <cdc:from>4800</cdc:from> <cdc:to>34356< <!--Optional:--> <cdc:tariffId>20880</cdc:tariffId> <cdc:keyword>HISTORIA</cdc:keyword> <cdc:errorCode>601</cdc:errorCode> <cdc:errorMessage>? </cdc:deliveryNotificationRequest>"     
+ 	When I make the post to this url "http://192.168.10.221:8080/axis2_claro_peru/services/CPNotificationService"
+    Then response should contain "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><cdc:submitSMSResponse xmlns:cdc="http://170.51.255.57:9191/CPNotificationService/"><cdc:submitResponse><cdc:transId></cdc:transId><cdc:statusCode>0</cdc:statusCode><cdc:statusMessage>Request accepted successfully</cdc:statusMessage></cdc:submitResponse></cdc:submitSMSResponse></soapenv:Body></soapenv:Envelope>"
+ 		And response code 200 must be returned
+ 
+
+  Scenario: Mensaje vacio
+    Given the message ""     
+ 	When I make the post to this url "http://192.168.10.221:8080/axis2_claro_peru/services/CPNotificationService"
+ 	Then response code 500 must be returned
+ 	
+  Scenario: Prueba con una url como parametro
+    Given the message "<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cdc="http://type.ws.cdc.tecnotree.com/CDCNotificationType"> <soapenv:Header/> <soapenv:Body> <cdc:deliveryNotificationRequest> <cdc:transId>1234567899876543</cdc:transId> <cdc:from>4800</cdc:from> <cdc:to>34356</cdc:to> <cdc:status>0</cdc:status> <!--Optional:--> <cdc:tariffId>20880</cdc:tariffId> <cdc:keyword>HISTORIA</cdc:keyword> <cdc:errorCode>602</cdc:errorCode> <cdc:errorMessage>?</cdc:errorMessage> </cdc:deliveryNotificationRequest> </soapenv:Body> </soapenv:Envelope>"
+ 	When I make the post to this url "http://192.168.10.221:8080/axis2_claro_peru/services/CPNotificationService"
+    Then response should contain "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><cdc:submitSMSResponse xmlns:cdc="http://170.51.255.57:9191/CPNotificationService/"><cdc:submitResponse><cdc:transId>1234567899876543</cdc:transId><cdc:statusCode>0</cdc:statusCode><cdc:statusMessage>Request accepted successfully</cdc:statusMessage></cdc:submitResponse></cdc:submitSMSResponse></soapenv:Body></soapenv:Envelope>"
+		And response code 200 must be returned
+ 	
+ 

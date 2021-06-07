@@ -1,0 +1,29 @@
+@executeThis
+Feature: Histórico de SMS
+  
+  entrega de contenido con la suscripción, mensaje recordatorio de suscripción activa y/o mensaje de bienvenida);
+  Scenario: SMS alta
+    Given      
+	When I make the post to this url "http://192.168.10.221:8080/axis2/services/ctr/notificarEvento"
+    Then response should contain "{ status: 'ok'}"
+		And response code 200 must be returned
+
+  Scenario: Baja suscripto movistar correcta
+    Given the message "ctr=[{"idOrigen":2, "idEvento":2, "fecha":"2015-07-23 16:31:00", "idSuscripcion":62762128, "msisdn":"1564567698", "idCarrier":1, "idServicio":5925, "idCTR":"1402100000000003168", "msg":"yupi", "NC":33000}]"
+	When I make the post to this url "http://192.168.10.221:8080/axis2/services/ctr/notificarEvento"
+    Then response should contain "{ status: 'ok'}"
+		And response code 200 must be returned
+    	
+  Scenario: Mensaje incorrecto, falta un campo
+    Given the message "ctr=[{}]"     
+	When I make the post to this url "http://192.168.10.221:8080/axis2/services/ctr/notificarEvento"
+    Then response should contain "{ status: 'ok'}"
+		And response code 200 must be returned
+ 
+  Scenario: Mensaje incorrecto, Json mal formado
+    Given the message "ctr=[}]"     
+	When I make the post to this url "http://192.168.10.221:8080/axis2/services/ctr/notificarEvento"
+    Then response should contain "{ status: 'error de entrada'}"
+		And response code 200 must be returned
+ 
+ 
